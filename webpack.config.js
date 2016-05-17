@@ -7,14 +7,20 @@ module.exports = {
 	output: {
 		path: process.env.NODE_ENV === 'production' ? './dist' : './dev',
 		filename: "elastic-overview.js"
+		// publicPath: function() {
+		// 	if (process.env.NODE_ENV === 'production') {
+		// 		return 'https://<???????>.cloudfront.net/'+process.env.npm_package_version+'/';
+		// 	}
+		// 	return 'http://localhost:8011/';
+		// }()
 	},
 	plugins: [
 		new webpack.DefinePlugin({
 			"process.env": {
-				NODE_ENV: JSON.stringify("production")
+				NODE_ENV: process.env.NODE_ENV === 'production' ? JSON.stringify("production") : JSON.stringify("dev")
 			}
 		}),
-		// new webpack.optimize.UglifyJsPlugin({ output: {comments: false} }),
+		process.env.NODE_ENV === 'production' ? new webpack.optimize.UglifyJsPlugin({ output: {comments: false} }) : new webpack.DefinePlugin({}),
 		new webpack.BannerPlugin('Plecto ApS (www.plecto.com)')
 	],
 	module: {
