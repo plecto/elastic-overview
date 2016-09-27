@@ -1,4 +1,4 @@
-$ = jQuery = require('jQuery');
+$ = jQuery = require('jquery');
 require('./styles.less');
 var React = require('react');
 var ReactDOM = require('react-dom');
