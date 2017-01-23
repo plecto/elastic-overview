@@ -31,7 +31,7 @@ var NodeListItem = React.createClass({
 				</tr>
 				<tr>
 					<td>Load Avg</td>
-					<td>{this.props.performance.os.load_average[0]}</td>
+					<td>{this.props.performance.os.cpu.load_average['15min']}</td>
 				</tr>
 				<tr>
 					<td>HD Free</td>
