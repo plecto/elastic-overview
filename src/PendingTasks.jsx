@@ -15,6 +15,11 @@ var PendingTasks = React.createClass({
 		}
 		return (
 			<table className="tasks">
+				<colgroup>
+					<col width="20%" />
+					<col width="20%" />
+					<col width="60%" />
+				</colgroup>
 				<thead>
 				<tr>
 					<th>Priority</th>
@@ -24,7 +29,7 @@ var PendingTasks = React.createClass({
 				</thead>
 				<tbody>
 				{this.props.pendingTasks.map(function(task, i) {
-					return <tr>
+					return <tr key={i}>
 						<td>{task.priority}</td>
 						<td>{task.time_in_queue}</td>
 						<td>{task.source}</td>

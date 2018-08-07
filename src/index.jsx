@@ -13,10 +13,11 @@ var App = React.createClass({
 		return {
 			nodeList: "/_nodes/",
 			nodePerformanceList: "/_nodes/stats/",
+			shardsList: "/_cat/shards/",
 			clusterHealth: "/_cluster/health/",
 			pendingTasks: "/_cluster/pending_tasks/",
 			nodeListRefresh: 60,  // seconds
-			nodePerformanceListRefresh: 30,
+			nodePerformanceListRefresh: 60,
 			clusterHealthRefresh: 10,
 			pendingTasksRefresh: 10
 		}
@@ -28,6 +29,7 @@ var App = React.createClass({
 			'clusterHealth': {},
 			'nodes': {},
 			'nodesPerformance': [],
+			'shardsPerformance': [],
 			'pendingTasks': []
 		};
 	},
@@ -35,45 +37,83 @@ var App = React.createClass({
 	componentDidMount: function() {
 		var that = this;
 
-		var nodes = function () {
+		var nodesRequest = function () {
 			$.get(that.state.rootUrl + that.props.nodeList, function (result) {
 				that.setState({
 					nodes: result.nodes
 				});
-				setTimeout(nodes, that.props.nodeListRefresh * 1000);
+				setTimeout(nodesRequest, that.props.nodeListRefresh * 1000);
 			}.bind(that));
 		};
 
-		var performance = function () {
+		var nodesPerformanceRequest = function () {
 			$.get(that.state.rootUrl + that.props.nodePerformanceList, function (result) {
 				that.setState({
 					nodesPerformance: result.nodes
 				});
-				setTimeout(performance, that.props.nodePerformanceListRefresh * 1000);
+				setTimeout(nodesPerformanceRequest, that.props.nodePerformanceListRefresh * 1000);
 			}.bind(that));
 		};
 
-		var health = function () {
+		var shardsRequest = function () {
+			$.get(that.state.rootUrl + that.props.shardsList, function (result) {
+				var data = result.split('\n');
+				data = data.map(function(line) {
+					line = line.split(' ');
+					var newLine = [];
+					$.each(line, function(i, val) {
+						if (val !== '') {
+							newLine.push(val);
+						}
+					});
+					return newLine;
+				});
+
+				var shardsPerNode = {};
+				$.each(data, function(i, shard) {
+					var docs = parseInt(shard[4]);
+					var node = shard[7];
+					if (node) {
+						if (!shardsPerNode.hasOwnProperty(node)) {
+							shardsPerNode[node] = {
+								'shards_count': 0,
+								'docs': 0,
+							}
+						}
+						shardsPerNode[node]['shards_count'] += 1;
+						shardsPerNode[node]['docs'] += docs;
+					}
+				});
+
+				that.setState({
+					shards: shardsPerNode
+				});
+			}.bind(that));
+		};
+
+		var healthRequest = function () {
 			$.get(that.state.rootUrl + that.props.clusterHealth, function (result) {
 				that.setState({
 					clusterHealth: result
 				});
-				setTimeout(health, that.props.clusterHealthRefresh * 1000);
+				setTimeout(healthRequest, that.props.clusterHealthRefresh * 1000);
 			}.bind(that));
 		};
 
-		var pendingTasks = function () {
+		var pendingTasksRequest = function () {
 			$.get(that.state.rootUrl + that.props.pendingTasks, function (result) {
 				that.setState({
 					pendingTasks: result.tasks
 				});
-				setTimeout(pendingTasks, that.props.pendingTasksRefresh * 1000);
+				setTimeout(pendingTasksRequest, that.props.pendingTasksRefresh * 1000);
 			}.bind(that));
 		};
-		nodes();
-		performance();
-		health();
-		pendingTasks();
+
+		nodesRequest();
+		nodesPerformanceRequest();
+		shardsRequest();
+		healthRequest();
+		pendingTasksRequest();
 	},
 
 	handleRootUrlChange: function(e) {
@@ -86,9 +126,9 @@ var App = React.createClass({
 		return (
 			<div>
 				<input type="text" onChange={this.handleRootUrlChange} value={this.state.rootUrl} className="input-root-url" />
-				<ClusterHealth health={this.state.clusterHealth}/>
-				<NodeList nodes={this.state.nodes} performance={this.state.nodesPerformance}/>
-				<PendingTasks pendingTasks={this.state.pendingTasks}/>
+				<ClusterHealth health={this.state.clusterHealth} />
+				<NodeList nodes={this.state.nodes} performance={this.state.nodesPerformance} shards={this.state.shards} />
+				<PendingTasks pendingTasks={this.state.pendingTasks} />
 			</div>
 		);
 	}
