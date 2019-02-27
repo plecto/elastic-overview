@@ -15,7 +15,13 @@ var NodeList = React.createClass({
 		var that = this;
 		return (
 			<div className="node-list">
-				{Object.keys(this.props.nodes).sort().map(function(nodeName, node) {
+				{Object.keys(this.props.nodes).sort(function(a, b) {
+					var nodeA = that.props.nodes[a];
+					var nodeB = that.props.nodes[b];
+					var scoreA = nodeA.settings.node.data === 'true' ? 2 : nodeA.settings.node.master === 'true' ? 1 : 0;
+					var scoreB = nodeB.settings.node.data === 'true' ? 2 : nodeB.settings.node.master === 'true' ? 1 : 0;
+					return scoreB - scoreA;
+				}).map(function(nodeName, node) {
 					var nodeId = that.props.nodes[nodeName].name;
 					return <NodeListItem
 						key={nodeName}
