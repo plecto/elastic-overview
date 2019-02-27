@@ -35,8 +35,8 @@ var NodeListItem = React.createClass({
 					<td>{Math.round(this.props.performance.jvm.mem.heap_max_in_bytes / 1000000)}MB</td>
 				</tr>
 				<tr>
-					<td>Load Avg</td>
-					<td>{this.props.performance.os.cpu.load_average['15m']}</td>
+					<td>Load Avg 5/15min</td>
+					<td>{this.props.performance.os.cpu.load_average['5m']} / {this.props.performance.os.cpu.load_average['15m']}</td>
 				</tr>
 				<tr>
 					<td>HD Free</td>
@@ -51,11 +51,11 @@ var NodeListItem = React.createClass({
 				</tr>
 				<tr>
 					<td>Shards</td>
-					<td>{this.props.shards && this.props.shards.shards_count ? Utils.prettyNumber(this.props.shards.shards_count) : 0}</td>
+					<td>{this.props.shards  ? this.props.shards.shards_count : 0}</td>
 				</tr>
 				<tr>
 					<td>Segments</td>
-					<td>{Utils.prettyNumber(this.props.performance.indices.segments.count)}</td>
+					<td>{this.props.performance.indices.segments.count}</td>
 				</tr>
 				<tr>
 					<td>Doc count</td>
@@ -78,6 +78,7 @@ var NodeListItem = React.createClass({
 					<div className="node-header">
 						<div className="node-type">{nodeType}</div>
 						<div className="node-name">{this.props.node.name}</div>
+						<div className="node-name">{this.props.node.ip}</div>
 					</div>
 					<div className="node-content">
 						{performanceInfo}
