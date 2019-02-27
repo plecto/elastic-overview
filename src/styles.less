@@ -31,8 +31,8 @@ body {
 
 .input-root-url {
 	position: absolute;
-	top: 0;
-	right: 0;
+	top: 4px;
+	right: 4px;
 	background: lighten(@color-bg, 30%);
 	color: darken(@color-text, 10%);
 	border: 0;
@@ -69,7 +69,7 @@ body {
 	text-align: center;
 	font-weight: @font-weight-light;
 	padding: 5px 0;
-	margin: 5px 0;
+	margin: 0 0 5px 0;
 	font-size: 140%;
 	text-transform: uppercase;
 }
@@ -110,10 +110,11 @@ body {
 .node-list {
 	.clearfix();
 	margin: 0 0 20px 0;
+	padding: 15px;
 }
 .node {
 	float: left;
-	width: 16.6%;
+	width: 20%;
 	margin: 0;
 	padding: 5px;
 }
@@ -179,6 +180,11 @@ body {
 //
 
 .tasks {
+	padding: 20px;
+}
+
+.tasks-table {
 	width: 100%;
 	font-size: 80%;
+	text-align: left;
 }
